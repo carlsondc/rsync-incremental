@@ -1,0 +1,101 @@
+Scripts for automatically performing incremental backups with rsync.
+
+Setup:
+Setup takes place at n + 1 locations: the "server" setup (where backups will
+be stored) and the n "client" setups (where backups will originate).
+
+Security Settings:
+----------------
+SERVER: 
+I recommend a dedicated "backup-operator" account with sudo
+permissions as such:
+
+  backup-operator ALL=NOPASSWD: /usr/bin/rsync, /usr/bin/find
+
+With root privileges, excute visudo and add the above line to the
+/etc/sudoers file. 
+
+Besides this, that account should not have a whole lot of access. It
+would probably be a good idea to disable password login for this
+account (e.g. as root: passwd -d backup-operator), or to have a very good password for it.
+
+CLIENT: 
+I recommend a dedicated "backup-operator" account with sudo
+permissions as such:
+
+  backup-operator ALL=NOPASSWD: /usr/bin/rsync
+
+Create an ssh public/private key pair with no password for your
+backup user:
+
+  ssh-keygen
+
+Copy the public key into the SERVER backup-operator's
+.ssh/authorized_keys section. I recommend temporarily allowing the
+server backup operator to connect via ssh with a password, then using 
+
+  ssh-copy-id backup-operator@server
+
+to move it over. After this, disable password authentication for
+backup-operator@server.
+
+TODO's:
+* would be nice to restrict permissions further (specific rsync
+  commands, or something like that)
+* create a security-setup script to automate this process: disallow
+  commands to run unless checks pass (e.g. user is not root, etc)
+
+Script Settings:
+---------------
+SERVER:
+* Clone/copy the server directory to your server, under the
+  backup-operator account's home directory. 
+* create some directory owned by the backup-operator account to store
+  the backups. it's recommeded that this be created under the
+  backup-operator account's home directory.
+* OPTIONAL: If you wish to do automated checks of backups:
+  * Edit the settings file to specify how much time can pass between
+    backups before a warning is issued.
+  * Update the BACKUP_ROOT var in settings to reflect the location of
+    your backup directory.
+
+TODO's: 
+* Make settingsFile a parameter here.
+
+CLIENT:
+* clone/copy the client directory to the machine which will be backed
+  up.
+* Fill in the variables in the settings file above the comment which
+  says "computed variables below."
+* NB: the SITE value should be unique across all of your backed-up
+  machines. If more than one machine claims to be the same SITE, all
+  hell will almost certainly break loose.
+
+TODO's:
+* better validation/safety-checks
+* add dpkg --get-selections to backup script
+
+
+Scheduling Settings:
+--------------------
+SERVER:
+If you want to automatically scan backups to make sure they are taking
+place, add an entry to the backup-operator's crontab to run the
+check_backups.sh script periodically. an example of this that will
+mail the results out at 8 AM every morning is:
+
+  0 8 * * * ~/check_backups.sh | mail -s "My Backup Server: Status $(date)" myemail@mydomain.com
+
+
+CLIENT:
+If you want to automatically perform backups, add an entry to the
+backup-operator's crontab to run the backup.sh script periodically.
+For example:
+
+  10 0 * * * /home/backup-operator/backup.sh >> rsync.log 2>&1
+
+where the redirection is optional.
+
+TODO's
+* should create a directory for /etc/cron.d on each, or script the
+   addition of cron jobs

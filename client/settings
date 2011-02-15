@@ -1,0 +1,38 @@
+#name to be used for backups from this client
+SITE=
+
+#non-root user running this backup at client
+LOCAL_BACKUP_USER=
+
+#non-root user at backup destination running rsync
+REMOTE_BACKUP_USER=
+
+#backup destination
+REMOTE_SERVER=
+
+#root of all backups at destination
+REMOTE_BACKUP_DIR=ibackup
+
+#1: REMOTE_BACKUP_DIR is under REMOTE_BACKUP_USER's home dir
+#0: REMOTE_BACKUP_DIR is an absolute path
+REMOTE_BACKUP_DIR_IS_RELATIVE=1
+
+# list of files to backup
+BACKUP_LIST="/var/log /var/spool /var/www /var/backups /etc /home"
+
+#-----computed variables below. These should not need to be modified----#
+#local passwordless SSH key
+LOCAL_SSH_KEY=/home/$LOCAL_BACKUP_USER/.ssh/id_rsa
+
+#compute actual backup root destination (all sites)
+if [ $REMOTE_BACKUP_DIR_IS_RELATIVE ]
+then
+    REMOTE_ROOT=/home/$REMOTE_BACKUP_USER/$REMOTE_BACKUP_DIR
+else
+    REMOTE_ROOT=$REMOTE_BACKUP_DIR
+fi
+
+#compute site root, current, and incremental
+REMOTE_SITE_ROOT=$REMOTE_ROOT/$SITE
+REMOTE_CUR=$REMOTE_SITE_ROOT/current
+REMOTE_INCREMENTAL=$REMOTE_SITE_ROOT/incremental
