@@ -25,8 +25,9 @@ permissions as such:
 
   backup-operator ALL=NOPASSWD: /usr/bin/rsync
 
-Create an ssh public/private key pair with no password for your
-backup user:
+Create an ssh public/private key pair password for your
+backup user (create it with NO PASSWORD if you plan on running backups
+automatically):
 
   ssh-keygen
 

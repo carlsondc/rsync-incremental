@@ -4,7 +4,7 @@
 LABEL=$(date +%Y-%m-%d-%H%M)
 
 #defaults
-settingsFile=settings
+settingsFile=$(dirname $0)/settings
 dryRun=0
 
 function usage(){
