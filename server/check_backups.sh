@@ -1,5 +1,5 @@
 #!/bin/bash
-settingsFile=settings
+settingsFile=$(dirname $0)/settings
 . $settingsFile
 
 nonEmptyVars=(BACKUP_ROOT elapsedSecondsPerUnit warnThresholdUnits warnThresholdSeconds)
