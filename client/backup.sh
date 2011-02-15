@@ -82,7 +82,7 @@ rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz \
     $BACKUP_LIST $REMOTE_BACKUP_USER@$REMOTE_SERVER:$REMOTE_NEW"
 
 cycleArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
-    \"/home/$REMOTE_BACKUP_USER/cycleBackups.sh $REMOTE_NEW $REMOTE_CUR\""
+    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/cycleBackups.sh $REMOTE_NEW $REMOTE_CUR\""
 
 eval "$rsyncCmd $rsyncArgs"
 eval "$cycleCmd $cycleArgs"
