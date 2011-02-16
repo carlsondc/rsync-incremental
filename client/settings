@@ -19,6 +19,7 @@ REMOTE_BACKUP_DIR_IS_RELATIVE=1
 
 # list of files to backup
 BACKUP_LIST="/var/log /var/spool /var/www /var/backups /etc /home"
+EXCLUDE_LIST="/dev/null"
 
 #-----computed variables below. These should not need to be modified----#
 #local passwordless SSH key
