@@ -79,7 +79,7 @@ fi
 
 rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz --copy-unsafe-links \
     --link-dest $REMOTE_CUR --rsync-path=\"sudo rsync\" \
-    --exclude=$EXCLUDE_LIST \
+    --exclude=$EXCLUDE_LIST --copy-unsafe-links \
     $BACKUP_LIST $REMOTE_BACKUP_USER@$REMOTE_SERVER:$REMOTE_NEW"
 
 cycleArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
