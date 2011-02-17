@@ -1,10 +1,10 @@
 #!/bin/sh
 if [ $# -ne 1 ]
 then
-    echo "usage: $0 siteRoot"
+    echo "usage: $0 dest"
 fi
-siteRoot=$1
-if [ -e $siteRoot/0.0 ]
+dest=$1
+if [ -e $dest ]
 then
     echo 1
 else
