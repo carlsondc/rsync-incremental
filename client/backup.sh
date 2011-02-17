@@ -95,17 +95,13 @@ rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz \
 
 #rotate command: rotate at depth 1, copy 0.0 to 1.0
 cycleArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
-    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/rotate.sh
+    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/rotate.sh \
     $REMOTE_SITE_ROOT 1 $DEPTH_ONE_BACKUPS\""
 
 #if another 0.0 file exists at destination, don't start backup
 checkLockArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
-    \"if [ -e $REMOTE_NEW ] \
-      then \
-        echo 1 \
-      else \
-        echo 0 \
-      fi\""
+    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/checkLock.sh \
+    $REMOTE_NEW \""
 
 alreadyExists=$(eval "$checkLockCmd $checkLockArgs")
 if [ $dryRun -eq 0 -a $alreadyExists -ne 0 ]
