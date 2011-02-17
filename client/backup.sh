@@ -93,10 +93,10 @@ rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz \
     --exclude=$EXCLUDE_LIST --copy-unsafe-links \
     $BACKUP_LIST $REMOTE_BACKUP_USER@$REMOTE_SERVER:$REMOTE_NEW"
 
-#rotate command: rotate at depth 1, copy 0.0 to 1.0
+#rotate command: rotate at depth 1, move 0.0 to 1.0
 cycleArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
     \"sudo /home/$REMOTE_BACKUP_USER/rsync-incremental/server/rotate.sh \
-    $REMOTE_SITE_ROOT 1 $DEPTH_ONE_BACKUPS\""
+    $REMOTE_SITE_ROOT 1 $DEPTH_ONE_BACKUPS 0\""
 
 #if another 0.0 file exists at destination, don't start backup
 checkLockArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
