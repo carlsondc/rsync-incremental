@@ -23,7 +23,7 @@ EXCLUDE_LIST="/dev/null"
 
 # number of depth-1 backups to maintain (e.g. if we back up daily and
 # want to keep a week, this should be 7.
-DEPTH_ONE_BACKUPS=2
+DEPTH_ONE_BACKUPS=7
 
 #-----computed variables below. These should not need to be modified----#
 #local passwordless SSH key
@@ -40,4 +40,3 @@ fi
 #compute site root, current, and incremental
 REMOTE_SITE_ROOT=$REMOTE_ROOT/$SITE
 REMOTE_CUR=$REMOTE_SITE_ROOT/1.0
-REMOTE_GRAVEYARD=$REMOTE_SITE_ROOT/graveyard
