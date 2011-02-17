@@ -104,10 +104,13 @@ checkLockArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
     $REMOTE_NEW \""
 
 alreadyExists=$(eval "$checkLockCmd $checkLockArgs")
-if [ $dryRun -eq 0 -a $alreadyExists -ne 0 ]
+if [ $dryRun -eq 0 ]
 then
-    echo "destination already exists: is another backup running?"
-    exit 1
+    if [ $alreadyExists -ne 0 ]
+    then
+        echo "destination already exists: is another backup running?"
+        exit 1
+    fi
 fi
 
 eval "$rsyncCmd $rsyncArgs"
