@@ -1,11 +1,12 @@
 #!/bin/sh
-if [ $# -eq 3 ]
+if [ $# -eq 4 ]
 then
     INCREMENTALS_DIR=$1
     TO_DEPTH=$2
     MAX_ALLOWED=$3
+    ROTATE_AS_COPY=$4
 else
-    echo "Usage: $0 incrementalsDir targetDepth maxAtDepth"
+    echo "Usage: $0 incrementalsDir targetDepth maxAtDepth rotateAsCopy"
     exit 1
 fi
 FROM_DEPTH=$(expr $TO_DEPTH - 1)
@@ -33,10 +34,18 @@ done
 
 # move in the new one: copy as link, maintain all
 # properties/timestamps/etc
+#  OR 
+# move
 src=$INCREMENTALS_DIR/$FROM_DEPTH.0
 dest=$INCREMENTALS_DIR/$TO_DEPTH.0
-echo "Linking $src to $dest"
-cp -al $src $dest
+if [ $ROTATE_AS_COPY -eq 1 ]
+then
+    echo "Linking $src to $dest"
+    cp -al $src $dest
+else
+    echo "Moving $src to $dest"
+    mv $src $dest
+fi
 
 #remove any excess
 if [ $MAX_ALLOWED -ne -1 ]

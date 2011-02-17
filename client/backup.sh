@@ -2,6 +2,9 @@
 
 #default label for this backup
 LABEL=$(date +%Y-%m-%d-%H%M)
+ts=$(date +%s)
+
+DEST=0.0
 
 #defaults
 settingsFile=$(dirname $0)/settings
@@ -46,8 +49,9 @@ done
 
 . $settingsFile
 
-REMOTE_NEW=$REMOTE_INCREMENTAL/$LABEL
-nonEmptyVars=(SITE LOCAL_BACKUP_USER REMOTE_BACKUP_USER REMOTE_SERVER REMOTE_BACKUP_DIR REMOTE_BACKUP_DIR_IS_RELATIVE BACKUP_LIST)
+REMOTE_NEW=$REMOTE_SITE_ROOT/$DEST
+nonEmptyVars=(SITE LOCAL_BACKUP_USER REMOTE_BACKUP_USER REMOTE_SERVER REMOTE_BACKUP_DIR REMOTE_BACKUP_DIR_IS_RELATIVE BACKUP_LIST REMOTE_SITE_ROOT REMOTE_CUR REMOTE_GRAVEYARD EXCLUDE_LIST)
+
 valid=1
 for varName in ${nonEmptyVars[*]}
 do
@@ -64,28 +68,53 @@ then
     exit 1
 fi
 
-echo "START $LABEL"
+echo "START $LABEL $ts"
 #echo "sudo rsync -e \"ssh -i $LOCAL_SSH_KEY\" -avRz --link-dest $REMOTE_CUR $BACKUP_LIST $REMOTE_BACKUP_USER@$REMOTE_SERVER:$REMOTE_INCREMENTAL"
 
 if [ $dryRun -eq 1 ]
 then
     echo "DRY RUN"
-    rsyncCmd='echo "sudo rsync "'
-    cycleCmd='echo "ssh "'
+    rsyncCmd='echo "sudo rsync"'
+    cycleCmd='echo "ssh"'
+    checkLockCmd='echo "ssh"'
+    unlockCmd='echo "ssh"'
 else
     rsyncCmd='sudo rsync '
     cycleCmd='ssh '
+    checkLockCmd='ssh'
+    unlockCmd='ssh'
 fi
 
-rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz --copy-unsafe-links \
+#backup command: copy in symlink targets outside of backup list,
+#  hard links to last backup contents, run as sudo at both ends,
+#  preserve permissions
+rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz \
     --link-dest $REMOTE_CUR --rsync-path=\"sudo rsync\" \
     --exclude=$EXCLUDE_LIST --copy-unsafe-links \
     $BACKUP_LIST $REMOTE_BACKUP_USER@$REMOTE_SERVER:$REMOTE_NEW"
 
+#rotate command: rotate at depth 1, copy 0.0 to 1.0
 cycleArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
-    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/cycleBackups.sh $REMOTE_NEW $REMOTE_CUR\""
+    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/rotate.sh
+    $REMOTE_SITE_ROOT 1 $DEPTH_ONE_BACKUPS\""
+
+#if another 0.0 file exists at destination, don't start backup
+checkLockArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
+    \"if [ -e $REMOTE_NEW ] \
+      then \
+        echo 1 \
+      else \
+        echo 0 \
+      fi\""
+
+alreadyExists=$(eval "$checkLockCmd $checkLockArgs")
+if [ $dryRun -eq 0 -a $alreadyExists -ne 0 ]
+then
+    echo "destination already exists: is another backup running?"
+    exit 1
+fi
 
 eval "$rsyncCmd $rsyncArgs"
 eval "$cycleCmd $cycleArgs"
 
-echo "END $NEW_BACKUP"
+echo "END $LABEL $ts"
