@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 settingsFile=$(dirname $0)/settings
 dryRun=0

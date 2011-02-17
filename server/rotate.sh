@@ -54,7 +54,7 @@ then
     for f in $(find $INCREMENTALS_DIR -maxdepth 1 -mindepth 1 -name "$TO_DEPTH.*")
     do
         i=$(echo $f | awk -F '.' '{print $NF}')
-        if [ $i -ge $MAX_INDEX_ALLOWED ]
+        if [ $i -gt $MAX_INDEX_ALLOWED ]
         then
             echo "Removing $f"
             mv $f $INCREMENTALS_DIR/dead_$(date +%s)_$(basename $f)
