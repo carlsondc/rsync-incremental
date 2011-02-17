@@ -60,7 +60,7 @@ else
 fi
 
 rotateArgs="$REMOTE_BACKUP_USER@$REMOTE_SERVER -i $LOCAL_SSH_KEY \
-    \"/home/$REMOTE_BACKUP_USER/rsync-incremental/server/rotate.sh \
+    \"sudo /home/$REMOTE_BACKUP_USER/rsync-incremental/server/rotate.sh \
     $REMOTE_SITE_ROOT $toDepth $maxAtDepth $rotateAsCopy\""
 
 eval "$rotateCmd $rotateArgs"
