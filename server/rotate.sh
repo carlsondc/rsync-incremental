@@ -57,7 +57,7 @@ then
         if [ $i -ge $MAX_INDEX_ALLOWED ]
         then
             echo "Removing $f"
-            mv $f graveyard/$(date +%s)_$(basename $f)
+            mv $f $INCREMENTALS_DIR/graveyard/$(date +%s)_$(basename $f)
         fi
     done
 fi
