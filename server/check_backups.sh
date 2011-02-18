@@ -23,7 +23,8 @@ echo "Checking backups in $BACKUP_ROOT"
 echo "Units are $elapsedSecondsPerUnit seconds, warning threshold is $warnThresholdUnits (u) = $warnThresholdSeconds (s)"
 for system in $(find $BACKUP_ROOT -maxdepth 1 -mindepth 1 -type d )
 do
-    if [ $(find $system -maxdepth 1 -name l.0 -type d | wc -l) -ne 1 ]
+    numFound=$(find $system -maxdepth 1 -mindepth 1 -name '1.0' -type d | wc -l)
+    if [ $numFound -ne 1 ]
     then
         echo "WARNING: No 1.0 directory (last backup) found."
     else

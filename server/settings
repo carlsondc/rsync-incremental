@@ -2,10 +2,10 @@
 BACKUP_ROOT=~/ibackup
 
 #seconds per unit: e.g. 60 if units is minute
-elapsedSecondsPerUnit=$(expr 24 \* 60 \* 60)
+elapsedSecondsPerUnit=$(expr 60 \* 60)
 
 #how many units can elapse before we give a warning message
-warnThresholdUnits=2
+warnThresholdUnits=48
 
 #----calculated values ----#
 warnThresholdSeconds=$(expr $warnThresholdUnits \* $elapsedSecondsPerUnit)
