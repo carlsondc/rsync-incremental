@@ -39,4 +39,9 @@ do
         echo "$(basename $system) $unitsElapsed ($secondsElapsed s)"
     fi
 done
+echo ""
+echo "Disk usage"
+echo "----------"
+df -h
+echo ""
 echo "Check done."
