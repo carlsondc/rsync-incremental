@@ -87,10 +87,10 @@ fi
 
 #backup command: copy in symlink targets outside of backup list,
 #  hard links to last backup contents, run as sudo at both ends,
-#  preserve permissions
+#  preserve permissions, use numeric GID/UIDs
 rsyncArgs="-e \"ssh -i $LOCAL_SSH_KEY\" -avRz \
     --link-dest $REMOTE_CUR --rsync-path=\"sudo rsync\" \
-    --exclude=$EXCLUDE_LIST --copy-unsafe-links \
+    --exclude=$EXCLUDE_LIST --copy-unsafe-links --numeric-ids \
     $BACKUP_LIST $REMOTE_BACKUP_USER@$REMOTE_SERVER:$REMOTE_NEW"
 
 #rotate command: rotate at depth 1, move 0.0 to 1.0
